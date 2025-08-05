@@ -197,7 +197,7 @@ $data = [
 
 // Get raw JSON POST data
 $input = json_decode(file_get_contents("php://input"), true);
-
+   
 if (isset($input['action']) && $input['action'] === 'getCountries') {
     echo json_encode([
         "status" => "success",
