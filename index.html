@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>POST Dropdown Example</title>
+</head>
+<body>
+
+  <h2>Select Country and State</h2>
+
+  <label for="country">Country:</label>
+  <select id="country">
+    <option value="">--Select Country--</option>
+  </select>
+
+  <br><br>
+
+  <label for="state">State:</label>
+  <select id="state">
+    <option value="">--Select State--</option>
+  </select>
+
+  <script>
+    // Fetch countries on load using POST
+    fetch('http://localhost:8000/cons.php', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ action: 'getCountries' })
+    })
+    .then(res => res.json())
+    .then(data => {
+      if (data.status === "success") {
+        const countryDropdown = document.getElementById('country');
+        data.countries.forEach(country => {
+          countryDropdown.innerHTML += `<option value="${country}">${country}</option>`;
+        });
+      }
+    });
+
+    // Fetch states on country change using POST
+    document.getElementById('country').addEventListener('change', function () {
+      const selectedCountry = this.value;
+      const stateDropdown = document.getElementById('state');
+      stateDropdown.innerHTML = '<option value="">--Select State--</option>';
+
+      if (selectedCountry) {
+        fetch('http://localhost:8000/cons.php', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ action: 'getStates', country: selectedCountry })
+        })
+        .then(res => res.json())
+        .then(data => {
+          if (data.status === "success") {
+            data.states.forEach(state => {
+              stateDropdown.innerHTML += `<option value="${state}">${state}</option>`;
+            });
+          }
+        });
+      }
+    });
+  </script>
+
+</body>
+</html>
